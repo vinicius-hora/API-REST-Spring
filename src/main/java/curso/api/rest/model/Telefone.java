@@ -10,6 +10,9 @@ import javax.persistence.ManyToOne;
 
 import org.hibernate.annotations.ForeignKey;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 
 @SuppressWarnings("deprecation")
 @Entity
@@ -23,8 +26,9 @@ public class Telefone implements Serializable {
 	
 	private String numero;
 	
+	@JsonIgnore
 	@ForeignKey(name="usuario_id")
-	@ManyToOne
+	@ManyToOne(optional = false)
 	private Usuario usuario;
 
 	public Long getId() {
