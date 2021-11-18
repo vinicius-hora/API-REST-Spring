@@ -94,7 +94,7 @@ public class UsuarioController {
 		
 		usuarioRepository.deleteById(id);
 		
-		return ResponseEntity.noContent().build();
+		return ResponseEntity.noContent().build().ok("ok");
 	}
 	
 

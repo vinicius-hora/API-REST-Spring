@@ -32,7 +32,7 @@ public class JWTTokenAutenticacaoService {
 	private static final String TOKEN_PREFIX = "Bearer";
 	
 	//retorno do metodo
-	private static final String HEADER_STRING = "Autorization";
+	private static final String HEADER_STRING = "Authorization";
 	
 	//gerando token de autenticação e adicionado resposta
 	public void addAuthentication(HttpServletResponse response, String username) throws IOException {
