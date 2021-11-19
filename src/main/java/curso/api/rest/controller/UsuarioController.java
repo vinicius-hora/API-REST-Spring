@@ -6,6 +6,8 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.util.SystemPropertyUtils;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -35,9 +37,29 @@ public class UsuarioController {
 		
 		Optional<Usuario> usuario = usuarioRepository.findById(id);
 		
-		
+		System.out.println("Executando versão 1");
 		return  new ResponseEntity<Usuario>(usuario.get(), HttpStatus.OK);
 	}
+	//versionamento por cabeçalho
+	@GetMapping(value = "/{id}", produces = "application/json", headers = "X-API-Version=v1")
+	public ResponseEntity<Usuario> initV1(@PathVariable(value = "id") Long id) {
+		
+		Optional<Usuario> usuario = usuarioRepository.findById(id);
+		
+		System.out.println("Executando versão 1");
+		return  new ResponseEntity<Usuario>(usuario.get(), HttpStatus.OK);
+	}
+	//versionamento de API pela url
+	//Serviço RestFull
+		//consulta por id
+		@GetMapping(value = "v3/{id}", produces = "application/json")
+		public ResponseEntity<Usuario> initV2(@PathVariable(value = "id") Long id) {
+			
+			Optional<Usuario> usuario = usuarioRepository.findById(id);
+			
+			System.out.println("Executando versão 2");
+			return  new ResponseEntity<Usuario>(usuario.get(), HttpStatus.OK);
+		}
 	/*
 	//exemplo para baixar relatorio de usuário especifico
 	@GetMapping(value = "/{id}/relatoriopdf", produces = "application/pdf")
@@ -67,6 +89,9 @@ public class UsuarioController {
 			usuario.getTelefone().get(pos).setUsuario(usuario);
 		}
 		
+		String senhaCriptografada = new BCryptPasswordEncoder().encode(usuario.getSenha());
+		usuario.setSenha(senhaCriptografada);
+		
 		Usuario usuarioSalvo = usuarioRepository.save(usuario);
 		
 		return new ResponseEntity<Usuario>(usuarioSalvo, HttpStatus.OK);
@@ -80,6 +105,13 @@ public class UsuarioController {
 		//permitir salvar telefone no cadastro de usuario
 		for (int pos = 0; pos < usuario.getTelefone().size(); pos ++) {
 			usuario.getTelefone().get(pos).setUsuario(usuario);
+		}
+		
+		Usuario userTemp = usuarioRepository.findUuserByLogin(usuario.getLogin());
+		
+		if(!userTemp.getSenha().equals(usuario.getSenha())) {
+			String senhaCriptografada = new BCryptPasswordEncoder().encode(usuario.getSenha());
+			usuario.setSenha(senhaCriptografada);
 		}
 				
 		Usuario usuarioSalvo = usuarioRepository.save(usuario);
