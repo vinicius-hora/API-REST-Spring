@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -40,6 +41,7 @@ public class UsuarioController {
 		System.out.println("Executando versão 1");
 		return  new ResponseEntity<Usuario>(usuario.get(), HttpStatus.OK);
 	}
+	/*
 	//versionamento por cabeçalho
 	@GetMapping(value = "/{id}", produces = "application/json", headers = "X-API-Version=v1")
 	public ResponseEntity<Usuario> initV1(@PathVariable(value = "id") Long id) {
@@ -71,12 +73,14 @@ public class UsuarioController {
 		return  new ResponseEntity<Usuario>(usuario.get(), HttpStatus.OK);
 	}
 	*/
-	
+	//cache para carregamento de usuário, supondo que seja um carregamento lento
 	//consulta todos
+	
 	@GetMapping(value = "/", produces = "application/json")
-	public ResponseEntity<List<Usuario>> usuario(){
+	public ResponseEntity<List<Usuario>> usuario() throws InterruptedException{
+		//trava o código por 6 segundos para simular lentidão
 		List<Usuario> list = (List<Usuario>) usuarioRepository.findAll();
-		
+		Thread.sleep(6000);
 		return new ResponseEntity<List<Usuario>>(list, HttpStatus.OK);
 	}
 	

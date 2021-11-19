@@ -24,14 +24,18 @@ public class WebConfigSecurity extends WebSecurityConfigurerAdapter{
 	//configura as solicitações de acesso por http
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		
+		http.headers().frameOptions().disable();
 		//ativando a proteção contra usuario que não estão validados por token
 		http.csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
 		//ativando a permissão para acesso a página inicial do sistema
 		.disable().authorizeRequests().antMatchers("/").permitAll()
 		.antMatchers("/index").permitAll()
-		//URL de logout - redireciona após o user deslogar do sistema
+		.antMatchers("/h2-console/**").permitAll()
+		.antMatchers("/resources/**").permitAll()
+		.antMatchers("**/resources/").permitAll()
+		//URL de logout - redireciona após o user deslogar do sistema 
 		.anyRequest().authenticated().and().logout().logoutSuccessUrl("/index")
+		
 		//mapeia URL de logout e invalida o usuário
 		.logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
 		
