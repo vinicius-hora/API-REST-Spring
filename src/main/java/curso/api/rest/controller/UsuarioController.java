@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -75,12 +77,16 @@ public class UsuarioController {
 	*/
 	//cache para carregamento de usuário, supondo que seja um carregamento lento
 	//consulta todos
-	@Cacheable("get-all-cache")
+	//@Cacheable("get-all-cache")
+	//remove cache parados a muito tempo
+	@CacheEvict(value = "cache-get-all", allEntries = true)
+	//atualiza quando a alteração no banco
+	@CachePut("cache-get-all")
 	@GetMapping(value = "/", produces = "application/json")
 	public ResponseEntity<List<Usuario>> usuario() throws InterruptedException{
 		//trava o código por 6 segundos para simular lentidão
 		List<Usuario> list = (List<Usuario>) usuarioRepository.findAll();
-		Thread.sleep(6000);
+		//Thread.sleep(6000);
 		return new ResponseEntity<List<Usuario>>(list, HttpStatus.OK);
 	}
 	

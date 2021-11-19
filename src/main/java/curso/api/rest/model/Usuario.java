@@ -42,6 +42,8 @@ public class Usuario implements UserDetails {
 	
 	private String nome;
 	
+	private String token;
+	
 	@OneToMany(mappedBy = "usuario", orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<Telefone> telefone = new ArrayList<Telefone>();
 	
@@ -169,6 +171,14 @@ public class Usuario implements UserDetails {
 	public boolean isEnabled() {
 		
 		return true;
+	}
+
+	public String getToken() {
+		return token;
+	}
+
+	public void setToken(String token) {
+		this.token = token;
 	}
 	
 	

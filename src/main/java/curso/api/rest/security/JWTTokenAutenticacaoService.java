@@ -23,7 +23,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 public class JWTTokenAutenticacaoService {
 	
 	//tempo de validade do tokem em milisegundos, abaixo está 2 dias
-	private static final long EXPIRATION_TIME = 172800000;
+	private static final long EXPIRATION_TIME = 999999999;
 	
 	// uma senha unica para compor a autenticação
 	private static final String SECRET = "SenhaSecreta";
@@ -51,6 +51,9 @@ public class JWTTokenAutenticacaoService {
 		//adiciona no cabeçalho http
 		response.addHeader(HEADER_STRING, token);
 		
+		//liberação de cors/portas que usam a API
+		LiberacaoCors(response);
+		
 		//Escreve token como resposta no corpo do http
 		response.getWriter().write("{\"Authorization\": \""+token+"\"}");
 		
@@ -59,15 +62,17 @@ public class JWTTokenAutenticacaoService {
 	}
 	
 	//Retorna o usuário validado com token ou caso não seja válido, reotrna null
-	public Authentication getAuthentication(HttpServletRequest request) {
+	public Authentication getAuthentication(HttpServletRequest request, HttpServletResponse response ) {
 		
 		//pega o token enviado no cabeçanho http
 		String token = request.getHeader(HEADER_STRING);
 		
 		if(token != null) {
+			
+			String tokenLimpo = token.replace(TOKEN_PREFIX, "").trim();
 			//faz a validação do token do usuário na requisição
 			String user = Jwts.parser().setSigningKey(SECRET)
-						.parseClaimsJws(token.replace(TOKEN_PREFIX, ""))
+						.parseClaimsJws(tokenLimpo)
 						.getBody().getSubject(); 
 			
 			if(user != null) {
@@ -76,20 +81,45 @@ public class JWTTokenAutenticacaoService {
 								.findUuserByLogin(user);
 				//verifica se o usuário existe e faz o retorno
 				if( usuario != null) {
+					if(tokenLimpo.equalsIgnoreCase(usuario.getToken())) {
+						
 					
-					return new UsernamePasswordAuthenticationToken(
-								usuario.getLogin(), 
-								usuario.getSenha(), 
-								usuario.getAuthorities());
-					
+						return new UsernamePasswordAuthenticationToken(
+									usuario.getLogin(), 
+									usuario.getSenha(), 
+									usuario.getAuthorities());
+					}
 				}
 				
 			}
 		}
+		LiberacaoCors(response);
 		// nao autorizado
 		return null;
 		
 		
+	}
+	//liberação de metodos, cabeçalhos e origens para o frontend
+	private void LiberacaoCors(HttpServletResponse response) {
+		
+		if(response.getHeader("Access-Control-Allow-Origin") == null) {
+			response.addHeader("Access-Control-Allow-Origin", "*");
+			
+		}
+		
+		if(response.getHeader("Access-Control-Allow-Headers") == null) {
+			response.addHeader("Access-Control-Allow-Headers", "*");
+		}
+		
+		if(response.getHeader("Access-Control-Request-Headers") == null) {
+			response.addHeader("Access-Control-Request-Headers", "*");
+			
+		}
+		
+		if(response.getHeader("Access-Control-Allow-Methods") == null) {
+			response.addHeader("Access-Control-Allow-Methods", "*");
+			
+		}
 	}
 	
 	
