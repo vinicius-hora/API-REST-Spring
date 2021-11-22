@@ -50,6 +50,10 @@ public class JWTTokenAutenticacaoService {
 		
 		//adiciona no cabeçalho http
 		response.addHeader(HEADER_STRING, token);
+		//chama o metodo de atualizção de token
+		ApplicationContextLoad.getApplicationContext()
+				.getBean(UsuarioRepository.class)
+				.atualizaTokenUser(JWT, username);
 		
 		//liberação de cors/portas que usam a API
 		LiberacaoCors(response);

@@ -88,12 +88,11 @@ public class UsuarioController {
 		//trava o código por 6 segundos para simular lentidão
 		List<Usuario> list = (List<Usuario>) usuarioRepository.findAll();
 		List<UsuarioDTO> listDTO = new ArrayList<>();
+		//convertendo usuários para usuarioDTO
 		listDTO = list.stream().map(x -> {
 			return new UsuarioDTO(x);
 		}).collect(Collectors.toList());
-		//Thread.sleep(6000);
 		
-		//list.map(x -> new UsuarioDTO(x));
 		return new ResponseEntity<List<UsuarioDTO>>(listDTO, HttpStatus.OK);
 	}
 	
