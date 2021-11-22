@@ -1,16 +1,16 @@
 package curso.api.rest.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.util.SystemPropertyUtils;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import curso.api.rest.DTO.UsuarioDTO;
 import curso.api.rest.model.Usuario;
 import curso.api.rest.repository.UsuarioRepository;
 
@@ -36,12 +37,12 @@ public class UsuarioController {
 	//Serviço RestFull
 	//consulta por id
 	@GetMapping(value = "/{id}", produces = "application/json")
-	public ResponseEntity<Usuario> init(@PathVariable(value = "id") Long id) {
+	public ResponseEntity<UsuarioDTO> init(@PathVariable(value = "id") Long id) {
 		
 		Optional<Usuario> usuario = usuarioRepository.findById(id);
 		
 		System.out.println("Executando versão 1");
-		return  new ResponseEntity<Usuario>(usuario.get(), HttpStatus.OK);
+		return  new ResponseEntity<UsuarioDTO>(new UsuarioDTO(usuario.get()), HttpStatus.OK);
 	}
 	/*
 	//versionamento por cabeçalho
@@ -83,11 +84,17 @@ public class UsuarioController {
 	//atualiza quando a alteração no banco
 	@CachePut("cache-get-all")
 	@GetMapping(value = "/", produces = "application/json")
-	public ResponseEntity<List<Usuario>> usuario() throws InterruptedException{
+	public ResponseEntity<List<UsuarioDTO>> usuario() throws InterruptedException{
 		//trava o código por 6 segundos para simular lentidão
 		List<Usuario> list = (List<Usuario>) usuarioRepository.findAll();
+		List<UsuarioDTO> listDTO = new ArrayList<>();
+		listDTO = list.stream().map(x -> {
+			return new UsuarioDTO(x);
+		}).collect(Collectors.toList());
 		//Thread.sleep(6000);
-		return new ResponseEntity<List<Usuario>>(list, HttpStatus.OK);
+		
+		//list.map(x -> new UsuarioDTO(x));
+		return new ResponseEntity<List<UsuarioDTO>>(listDTO, HttpStatus.OK);
 	}
 	
 	//cadastrar
