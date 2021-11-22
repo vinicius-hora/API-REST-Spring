@@ -44,6 +44,19 @@ public class Usuario implements UserDetails {
 	
 	private String token;
 	
+	private String cep;
+	
+	private String logradouro;
+	
+	private String complemento;
+	
+	private String bairro;
+	
+	private String localidade;
+	
+	private String uf;
+	
+	
 	@OneToMany(mappedBy = "usuario", orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<Telefone> telefone = new ArrayList<Telefone>();
 	
@@ -98,39 +111,7 @@ public class Usuario implements UserDetails {
 	public void setTelefone(List<Telefone> telefone) {
 		this.telefone = telefone;
 	}
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Usuario other = (Usuario) obj;
-		if (id == null) {
-			if (other.id != null)
-				return false;
-		} else if (!id.equals(other.id))
-			return false;
-		return true;
-	}
 	
-	//autorizações ou acessos dos usuários, ROLES
-	@Override
-	public Collection<? extends GrantedAuthority> getAuthorities() {
-		
-		return roles;
-	}
-
 	@JsonIgnore
 	@Override
 	public String getPassword() {
@@ -180,6 +161,89 @@ public class Usuario implements UserDetails {
 	public void setToken(String token) {
 		this.token = token;
 	}
+	
+	
+
+	public String getCep() {
+		return cep;
+	}
+
+	public void setCep(String cep) {
+		this.cep = cep;
+	}
+
+	public String getLogradouro() {
+		return logradouro;
+	}
+
+	public void setLogradouro(String logradouro) {
+		this.logradouro = logradouro;
+	}
+
+	public String getComplemento() {
+		return complemento;
+	}
+
+	public void setComplemento(String complemento) {
+		this.complemento = complemento;
+	}
+
+	public String getBairro() {
+		return bairro;
+	}
+
+	public void setBairro(String bairro) {
+		this.bairro = bairro;
+	}
+
+	public String getLocalidade() {
+		return localidade;
+	}
+
+	public void setLocalidade(String localidade) {
+		this.localidade = localidade;
+	}
+
+	public String getUf() {
+		return uf;
+	}
+
+	public void setUf(String uf) {
+		this.uf = uf;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Usuario other = (Usuario) obj;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		return true;
+	}
+	
+	//autorizações ou acessos dos usuários, ROLES
+	@Override
+	public Collection<? extends GrantedAuthority> getAuthorities() {
+		
+		return roles;
+	}
+
 	
 	
 	
