@@ -32,5 +32,6 @@ public class JWTApiAutenticacaoFilter extends GenericFilterBean {
 		chain.doFilter(request, response);
 		
 	}
+	
 
 }

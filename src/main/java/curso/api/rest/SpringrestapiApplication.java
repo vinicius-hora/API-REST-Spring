@@ -10,7 +10,11 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+
+import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 //configurando spring para reconhecer os pacotes
 @SpringBootApplication
@@ -38,5 +42,14 @@ public class SpringrestapiApplication implements WebMvcConfigurer {
 		
 	}
 	*/
+	
+	@Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+     registry.addResourceHandler("/static/**")
+     .addResourceLocations("classpath:/static/");
+     
+    }
+	
+	
 
 }

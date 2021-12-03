@@ -32,11 +32,16 @@ import com.google.gson.Gson;
 import curso.api.rest.DTO.UsuarioDTO;
 import curso.api.rest.model.Usuario;
 import curso.api.rest.repository.UsuarioRepository;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 
 //libera o acesso com o Crossorigin
-@CrossOrigin(origins = "*")
+
+
 @RestController
 @RequestMapping(value = "/usuario")
+@Api(value = "API REST Usuários")
+@CrossOrigin(origins = "*")
 public class UsuarioController {
 	
 	@Autowired
@@ -45,6 +50,7 @@ public class UsuarioController {
 	//Serviço RestFull
 	//consulta por id
 	@GetMapping(value = "/{id}", produces = "application/json")
+	@ApiOperation(value = "Retorna um usuário")
 	public ResponseEntity<UsuarioDTO> init(@PathVariable(value = "id") Long id) {
 		
 		Optional<Usuario> usuario = usuarioRepository.findById(id);
@@ -92,6 +98,7 @@ public class UsuarioController {
 	//atualiza quando a alteração no banco
 	@CachePut("cache-get-all")
 	@GetMapping(value = "/", produces = "application/json")
+	@ApiOperation(value = "Retorna todos os usuários")
 	public ResponseEntity<List<UsuarioDTO>> usuario() throws InterruptedException{
 		//trava o código por 6 segundos para simular lentidão
 		List<Usuario> list = (List<Usuario>) usuarioRepository.findAll();
@@ -106,6 +113,7 @@ public class UsuarioController {
 	
 	//cadastrar
 	@PostMapping(value = "/", produces = "application/json")
+	@ApiOperation(value = "Cadastra um usuário")
 	public ResponseEntity<Usuario> Cadastrar(@RequestBody Usuario usuario) throws Exception{
 		
 		//permitir salvar telefone no cadastro de usuario
@@ -152,6 +160,7 @@ public class UsuarioController {
 	
 	//atualizar
 	@PutMapping(value = "/", produces = "application/json")
+	@ApiOperation(value = "Edita um usuário")
 	public ResponseEntity<Usuario> Atualizar(@RequestBody Usuario usuario){
 		
 		//permitir salvar telefone no cadastro de usuario
@@ -174,6 +183,7 @@ public class UsuarioController {
 	
 	//delete
 	@DeleteMapping(value = "/{id}", produces = "application/text")
+	@ApiOperation(value = "Deleta um usuário")
 	public ResponseEntity<?> Delete(@PathVariable("id") Long id) {
 		
 		usuarioRepository.deleteById(id);
